@@ -17,13 +17,14 @@ export default function CollapsibleSection({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className={`space-y-4 my-3 ${className}`}>
+    <div className={`space-y-2 my-2 ${className}`}>
       {/* Section Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 retro-button hover:bg-[var(--retro-accent)] transition-colors"
+        aria-expanded={isExpanded}
+        className="w-full flex items-center justify-between px-3 py-2.5 retro-button hover:bg-[var(--retro-accent)] transition-colors"
       >
-        <h3 className="text-sm font-bold text-[var(--retro-text)] uppercase tracking-wide text-center flex-1">
+        <h3 className="text-xs font-bold text-[var(--retro-text)] uppercase tracking-wider text-left flex-1">
           {title}
         </h3>
         {isExpanded ? (
@@ -35,7 +36,7 @@ export default function CollapsibleSection({
 
       {/* Section Content */}
       {isExpanded && (
-        <div className="space-y-4 px-2 py-3">
+        <div className="space-y-3 px-1 py-2">
           {children}
         </div>
       )}

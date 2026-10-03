@@ -1,4 +1,4 @@
-// Environment configuration for WalrusCanvas AI
+// Environment configuration for Grafi AI
 export const config = {
   // AI Services (Server-side only for security)
   openaiApiKey: process.env.OPENAI_API_KEY || '',

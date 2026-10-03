@@ -368,14 +368,14 @@ export default function PropertyPanel({
     
     if (format === 'png') {
       const link = document.createElement('a');
-      link.download = `walrus-canvas-design.${format}`;
+      link.download = `grafi-ai-design.${format}`;
       link.href = data;
       link.click();
     } else {
       const blob = new Blob([data], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `walrus-canvas-design.${format}`;
+      link.download = `grafi-ai-design.${format}`;
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
@@ -439,8 +439,8 @@ export default function PropertyPanel({
   return (
     <div className="h-full flex flex-col w-full min-w-0 max-w-full">
       {/* Header */}
-      <div className="p-4 border-b-2 border-[var(--retro-border)] flex-shrink-0 min-w-0">
-        <h2 className="text-lg font-bold text-[var(--retro-text)]">Properties</h2>
+      <div className="px-4 py-3 border-b-2 border-[var(--retro-border)] flex-shrink-0 min-w-0">
+        <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--retro-text)]">Properties</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto w-full min-w-0 max-w-full">

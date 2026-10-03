@@ -1,22 +1,44 @@
 'use client';
 
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useCurrentAccount, useAutoConnectWallet } from '@mysten/dapp-kit';
+import LandingPage from '@/components/Landing/LandingPage';
+import Splash from '@/components/UI/Splash';
 
-// Dynamically import CanvasEditor to avoid SSR issues with Fabric.js
+// Dynamically import CanvasEditor to avoid SSR issues with Fabric.js.
+// It is only loaded once a wallet is connected.
 const CanvasEditor = dynamic(() => import('@/components/Canvas/CanvasEditor'), {
   ssr: false,
-  loading: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center retro-panel p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--retro-accent)] mx-auto mb-4"></div>
-        <p className="text-[var(--retro-text)] font-bold">Loading WalrusCanvas AI...</p>
-      </div>
-    </div>
-  ),
+  loading: () => <Splash label="Opening your studio…" />,
 });
 
+// Key dApp Kit uses to remember the last connected wallet
+const WALLET_STORAGE_KEY = 'sui-dapp-kit:wallet-connection-info';
+
 export default function Home() {
+  const currentAccount = useCurrentAccount();
+  const autoConnectStatus = useAutoConnectWallet();
+  const [hasStoredWallet, setHasStoredWallet] = useState(false);
+
+  // Runs before paint, so returning users never see the landing page flash,
+  // while first-time visitors still get it in the server-rendered HTML.
+  useLayoutEffect(() => {
+    try {
+      setHasStoredWallet(!!localStorage.getItem(WALLET_STORAGE_KEY));
+    } catch {
+      // storage unavailable: treat as a first-time visitor
+    }
+  }, []);
+
+  if (autoConnectStatus === 'idle' && hasStoredWallet) {
+    return <Splash label="Restoring your wallet…" />;
+  }
+
+  if (!currentAccount) {
+    return <LandingPage />;
+  }
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <CanvasEditor />

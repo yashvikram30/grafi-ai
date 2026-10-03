@@ -5,7 +5,7 @@ import {
   Type, 
   Square, 
   Circle, 
-  Image, 
+  Image as ImageIcon,
   Trash2, 
   ZoomIn, 
   ZoomOut, 
@@ -56,12 +56,6 @@ export default function Toolbar({
   isWalletConnected = false
 }: ToolbarProps) {
 
-  const handleAddText = () => {
-    // Text is now handled by drawing mode, no need for prompt
-    onSetDrawingMode('text');
-    onSetTool('text');
-  };
-
   const handleImageClick = () => {
     onSetTool('image');
   };
@@ -79,121 +73,66 @@ export default function Toolbar({
     if (canvas) {
       const dataURL = canvas.toDataURL({ format: 'png' });
       const link = document.createElement('a');
-      link.download = 'walrus-canvas-design.png';
+      link.download = 'grafi-ai-design.png';
       link.href = dataURL;
       link.click();
     }
   };
 
-  const colors = [
-    // Row 1: Primary Colors (10 colors) - Very vibrant
-    '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FF8000', '#800080',
-    // Row 2: Secondary Colors (10 colors) - Bright and clear
-    '#FF4444', '#00CCCC', '#4488FF', '#44FF44', '#FFFF44', '#FF44FF', '#44FFFF', '#FF8844', '#8844FF', '#FF44CC',
-    // Row 3: Vibrant Colors (10 colors) - High saturation
-    '#FF1493', '#32CD32', '#FF6347', '#00CED1', '#FF4500', '#9370DB', '#20B2AA', '#FF69B4', '#FFD700', '#FFA500',
-    // Row 4: Pastel Colors (10 colors) - Soft but visible
-    '#FFB6C1', '#98FB98', '#87CEEB', '#DDA0DD', '#F0E68C', '#FFA07A', '#20B2AA', '#FFC0CB', '#D8BFD8', '#F5DEB3',
-    // Row 5: Dark Colors (10 colors) - Rich and deep
-    '#8B0000', '#006400', '#00008B', '#B8860B', '#800080', '#008B8B', '#2F4F4F', '#8B4513', '#2E8B57', '#4B0082'
+  const tools: { mode: NonNullable<DrawingMode>; label: string; icon: React.ElementType; hint: string }[] = [
+    { mode: 'select', label: 'Select', icon: MousePointer, hint: 'Select and move objects' },
+    { mode: 'pencil', label: 'Pencil', icon: Pencil, hint: 'Draw freehand' },
+    { mode: 'text', label: 'Text', icon: Type, hint: 'Click the canvas to add text' },
+    { mode: 'rectangle', label: 'Rectangle', icon: Square, hint: 'Drag to draw a rectangle' },
+    { mode: 'circle', label: 'Circle', icon: Circle, hint: 'Drag to draw a circle' },
   ];
 
+  const colors = Array.from(new Set([
+    '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FF8000', '#800080',
+    '#FF4444', '#00CCCC', '#4488FF', '#44FF44', '#FFFF44', '#FF44FF', '#44FFFF', '#FF8844', '#8844FF', '#FF44CC',
+    '#FF1493', '#32CD32', '#FF6347', '#00CED1', '#FF4500', '#9370DB', '#20B2AA', '#FF69B4', '#FFD700', '#FFA500',
+    '#FFB6C1', '#98FB98', '#87CEEB', '#DDA0DD', '#F0E68C', '#FFA07A', '#FFC0CB', '#D8BFD8', '#F5DEB3', '#97F0E5',
+    '#8B0000', '#006400', '#00008B', '#B8860B', '#008B8B', '#2F4F4F', '#8B4513', '#2E8B57', '#4B0082',
+  ]));
+
   return (
-    <div className="px-4 py-6">
+    <div className="px-3 py-3">
       {/* Drawing Tools */}
-      <CollapsibleSection title="Drawing Tools" defaultExpanded={false}>
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => {
-              onSetDrawingMode('select');
-              onSetTool('select');
-            }}
-            className={cn(
-              "retro-button flex items-center justify-center p-4 transition-colors text-center",
-              drawingMode === 'select' 
-                ? "bg-[var(--retro-accent)]" 
-                : "hover:bg-[var(--retro-accent)]"
-            )}
-            title="Select Tool"
-          >
-            <MousePointer className="w-5 h-5" />
-          </button>
-          
-          <button
-            onClick={() => {
-              onSetDrawingMode('pencil');
-              onSetTool('pencil');
-            }}
-            className={cn(
-              "retro-button flex items-center justify-center p-4 transition-colors text-center",
-              drawingMode === 'pencil' 
-                ? "bg-[var(--retro-accent)]" 
-                : "hover:bg-[var(--retro-accent)]"
-            )}
-            title="Pencil Tool"
-          >
-            <Pencil className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleAddText}
-            className={cn(
-              "retro-button flex items-center justify-center p-4 transition-colors text-center",
-              drawingMode === 'text' 
-                ? "bg-[var(--retro-accent)]" 
-                : "hover:bg-[var(--retro-accent)]"
-            )}
-            title="Add Text"
-          >
-            <Type className="w-5 h-5" />
-          </button>
-          
-          <button
-            onClick={() => {
-              console.log('Rectangle button clicked');
-              onSetDrawingMode('rectangle');
-              onSetTool('rectangle');
-            }}
-            className={cn(
-              "retro-button flex items-center justify-center p-4 transition-colors text-center",
-              drawingMode === 'rectangle' 
-                ? "bg-[var(--retro-accent)]" 
-                : "hover:bg-[var(--retro-accent)]"
-            )}
-            title="Draw Rectangle"
-          >
-            <Square className="w-5 h-5" />
-          </button>
-          
-          <button
-            onClick={() => {
-              console.log('Circle button clicked');
-              onSetDrawingMode('circle');
-              onSetTool('circle');
-            }}
-            className={cn(
-              "retro-button flex items-center justify-center p-4 transition-colors text-center",
-              drawingMode === 'circle' 
-                ? "bg-[var(--retro-accent)]" 
-                : "hover:bg-[var(--retro-accent)]"
-            )}
-            title="Draw Circle"
-          >
-            <Circle className="w-5 h-5" />
-          </button>
-          
+      <CollapsibleSection title="Drawing Tools" defaultExpanded>
+        <div className="grid grid-cols-3 gap-2">
+          {tools.map(({ mode, label, icon: Icon, hint }) => (
+            <button
+              key={label}
+              onClick={() => {
+                onSetDrawingMode(mode);
+                onSetTool(mode);
+              }}
+              className={cn(
+                "retro-button flex flex-col items-center justify-center gap-1 px-1 py-3 text-center",
+                drawingMode === mode ? "bg-[var(--retro-accent)] shadow-[1px_1px_0_#000] translate-y-px" : "hover:bg-[var(--retro-accent)]"
+              )}
+              title={hint}
+              aria-pressed={drawingMode === mode}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-xs font-semibold">{label}</span>
+            </button>
+          ))}
+
           <button
             onClick={handleImageClick}
-            className="retro-button flex items-center justify-center p-4 transition-colors hover:bg-[var(--retro-accent)] text-center"
-            title="Add Image"
+            className="retro-button flex flex-col items-center justify-center gap-1 px-1 py-3 text-center hover:bg-[var(--retro-accent)]"
+            title="Add an image from your device"
           >
-            <Image className="w-5 h-5" aria-label="Add Image" />
+            <ImageIcon className="w-5 h-5" aria-hidden="true" />
+            <span className="text-xs font-semibold">Image</span>
           </button>
         </div>
       </CollapsibleSection>
 
       {/* AI Tools */}
       {(onAIText || onAIImage) && (
-        <CollapsibleSection title="AI Tools" defaultExpanded={false}>
+        <CollapsibleSection title="AI Tools" defaultExpanded>
           <div className="space-y-4">
             {onAIText && (
               <button
@@ -222,107 +161,32 @@ export default function Toolbar({
 
 
       {/* Color Palette */}
-      <CollapsibleSection title="Color Palette" defaultExpanded={false}>
+      <CollapsibleSection title="Background Color" defaultExpanded={false}>
         <div className="space-y-3">
-          {/* Row 1: Primary Colors */}
-          <div className="grid grid-cols-5 gap-2">
-            {colors.slice(0, 10).map((color) => (
+          <div className="grid grid-cols-8 gap-1.5">
+            {colors.map((color, i) => (
               <button
-                key={color}
+                key={`${color}-${i}`}
                 onClick={() => onSetBackgroundColor(color)}
                 className={cn(
-                  "w-8 h-8 rounded-full border-2 hover:scale-110 transition-transform shadow-sm",
-                  canvas?.backgroundColor === color ? "border-[var(--retro-accent)] ring-2 ring-[var(--retro-accent)]" : "border-gray-600"
+                  "w-6 h-6 rounded-full border-2 hover:scale-110 transition-transform",
+                  canvas?.backgroundColor === color ? "border-black ring-2 ring-[var(--retro-accent)] scale-110" : "border-gray-500"
                 )}
-                style={{ 
-                  backgroundColor: color,
-                  minWidth: '32px',
-                  minHeight: '32px'
-                }}
+                style={{ backgroundColor: color }}
                 title={color}
+                aria-label={`Set background to ${color}`}
               />
             ))}
           </div>
-          
-          {/* Row 2: Secondary Colors */}
-          <div className="grid grid-cols-5 gap-2">
-            {colors.slice(10, 20).map((color) => (
-              <button
-                key={color}
-                onClick={() => onSetBackgroundColor(color)}
-                className={cn(
-                  "w-8 h-8 rounded-full border-2 hover:scale-110 transition-transform shadow-sm",
-                  canvas?.backgroundColor === color ? "border-[var(--retro-accent)] ring-2 ring-[var(--retro-accent)]" : "border-gray-600"
-                )}
-                style={{ 
-                  backgroundColor: color,
-                  minWidth: '32px',
-                  minHeight: '32px'
-                }}
-                title={color}
-              />
-            ))}
-          </div>
-          
-          {/* Row 3: Vibrant Colors */}
-          <div className="grid grid-cols-5 gap-2">
-            {colors.slice(20, 30).map((color) => (
-              <button
-                key={color}
-                onClick={() => onSetBackgroundColor(color)}
-                className={cn(
-                  "w-8 h-8 rounded-full border-2 hover:scale-110 transition-transform shadow-sm",
-                  canvas?.backgroundColor === color ? "border-[var(--retro-accent)] ring-2 ring-[var(--retro-accent)]" : "border-gray-600"
-                )}
-                style={{ 
-                  backgroundColor: color,
-                  minWidth: '32px',
-                  minHeight: '32px'
-                }}
-                title={color}
-              />
-            ))}
-          </div>
-          
-          {/* Row 4: Pastel Colors */}
-          <div className="grid grid-cols-5 gap-2">
-            {colors.slice(30, 40).map((color) => (
-              <button
-                key={color}
-                onClick={() => onSetBackgroundColor(color)}
-                className={cn(
-                  "w-8 h-8 rounded-full border-2 hover:scale-110 transition-transform shadow-sm",
-                  canvas?.backgroundColor === color ? "border-[var(--retro-accent)] ring-2 ring-[var(--retro-accent)]" : "border-gray-600"
-                )}
-                style={{ 
-                  backgroundColor: color,
-                  minWidth: '32px',
-                  minHeight: '32px'
-                }}
-                title={color}
-              />
-            ))}
-          </div>
-          
-          {/* Row 5: Dark Colors */}
-          <div className="grid grid-cols-5 gap-2">
-            {colors.slice(40, 50).map((color) => (
-              <button
-                key={color}
-                onClick={() => onSetBackgroundColor(color)}
-                className={cn(
-                  "w-8 h-8 rounded-full border-2 hover:scale-110 transition-transform shadow-sm",
-                  canvas?.backgroundColor === color ? "border-[var(--retro-accent)] ring-2 ring-[var(--retro-accent)]" : "border-gray-600"
-                )}
-                style={{ 
-                  backgroundColor: color,
-                  minWidth: '32px',
-                  minHeight: '32px'
-                }}
-                title={color}
-              />
-            ))}
-          </div>
+          <label className="flex items-center justify-between gap-3 text-xs font-semibold">
+            Custom color
+            <input
+              type="color"
+              onChange={(e) => onSetBackgroundColor(e.target.value)}
+              className="h-8 w-14 cursor-pointer border-2 border-black rounded bg-white p-0.5"
+              aria-label="Pick a custom background color"
+            />
+          </label>
         </div>
       </CollapsibleSection>
 

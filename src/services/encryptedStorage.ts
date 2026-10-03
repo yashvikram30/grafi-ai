@@ -57,7 +57,7 @@ export class EncryptedStorageService {
           walletName: 'Encrypted Storage',
           walletType: 'encrypted',
           version: '1.0.0',
-          type: 'canva-design',
+          type: 'grafi-design',
           canvasSize: {
             width: 800,
             height: 600
@@ -187,7 +187,7 @@ export class EncryptedStorageService {
           walletName: 'Encrypted Storage',
           walletType: 'encrypted',
           version: '1.0.0',
-          type: 'canva-design',
+          type: 'grafi-design',
           canvasSize: {
             width: 800,
             height: 600

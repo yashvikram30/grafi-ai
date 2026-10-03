@@ -1,4 +1,4 @@
-# WalrusCanvas AI - Decentralized Design Tool
+# Grafi AI - AI-Powered Decentralized Design Studio
 
 An AI-powered decentralized design tool with encrypted storage using Walrus and Seal for hackathon demonstration.
 
@@ -26,12 +26,12 @@ An AI-powered decentralized design tool with encrypted storage using Walrus and 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd decentralized_canva
+   cd grafi-ai
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install --legacy-peer-deps
+   bun install
    ```
 
 3. **Set up environment variables**
@@ -56,7 +56,7 @@ An AI-powered decentralized design tool with encrypted storage using Walrus and 
 
 4. **Run the development server**
    ```bash
-   npm run dev
+   bun run dev
    ```
 
 5. **Open your browser**
@@ -114,10 +114,10 @@ src/
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run start` - Start production server
+- `bun run lint` - Run ESLint
 
 ### Key Components
 
@@ -179,7 +179,7 @@ This is a hackathon project. For production use, replace mock services with real
 
 1. **Build the project**
    ```bash
-   npm run build
+   bun run build
    ```
 
 2. **Deploy to Vercel**

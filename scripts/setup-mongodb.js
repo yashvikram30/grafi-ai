@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * MongoDB Setup Script for Decentralized Canva
+ * MongoDB Setup Script for Grafi AI
  * 
- * This script helps set up MongoDB for the decentralized canva application.
+ * This script helps set up MongoDB for the Grafi AI application.
  * It creates the necessary database and collections with proper indexes.
  */
 
@@ -11,7 +11,7 @@
 const mongoose = require('mongoose');
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = process.env.MONGODB_DB_NAME || 'decentralized_canva';
+const DB_NAME = process.env.MONGODB_DB_NAME || 'grafi_ai';
 
 // Check if using MongoDB Atlas
 const isAtlas = MONGODB_URI.includes('mongodb+srv://');

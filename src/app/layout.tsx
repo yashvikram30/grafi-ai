@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import '@mysten/dapp-kit/dist/index.css';
 import Providers from '@/components/Providers';
-import '@/lib/pixel-retroui-setup.js';
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
 export const metadata: Metadata = {
-  title: "WalrusCanvas AI - Decentralized Design Tool",
-  description: "AI-powered decentralized design tool with encrypted storage using Walrus and Seal",
+  title: "Grafi AI - AI-Powered Decentralized Design Studio",
+  description: "Grafi AI is an AI-powered design studio. Create with AI, encrypt with Seal, and store your designs on Walrus. Your wallet, your work.",
 };
 
 export default function RootLayout({
@@ -22,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         <Providers>
           {children}
         </Providers>

@@ -25,9 +25,9 @@ export default function Providers({ children }: ProvidersProps) {
       <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
         <WalletProvider
           slushWallet={{
-            name: 'WalrusCanvas AI', // Required: Shows in Slush wallet UI
+            name: 'Grafi AI', // Required: Shows in Slush wallet UI
           }}
-          autoConnect={false} // Disable auto-reconnect so manual disconnect persists
+          autoConnect // Restore the last connected wallet; a manual disconnect clears it
           preferredWallets={['Slush']} // Optional: Show Slush first
         >
           {children}

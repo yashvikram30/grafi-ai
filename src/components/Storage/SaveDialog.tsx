@@ -90,7 +90,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
           walletName: walletName || 'Unknown Wallet',
           walletType: walletType || 'unknown',
           version: '1.0.0',
-          type: 'canva-design',
+          type: 'grafi-design',
           canvasSize: {
             width: canvas.getWidth(),
             height: canvas.getHeight()
@@ -103,7 +103,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
         designToStore, 
         signerToUse,
         1, // epochs (reduced for lower WAL requirement)
-        { 'app': 'decentralized-canva', 'type': 'design' },
+        { 'app': 'grafi-ai', 'type': 'design' },
         address || undefined // userAddress for encryption
       );
       setSavedBlobId(result.blobId);

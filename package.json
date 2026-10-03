@@ -1,5 +1,5 @@
 {
-  "name": "decentralized_canva",
+  "name": "grafi-ai",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,7 @@
     "lint": "eslint",
     "download-fonts": "node scripts/download-fonts.js",
     "deploy-contract": "node scripts/deploy-contract.js",
-    "setup-mongodb": "node scripts/setup-mongodb.js",
-    "test-mongodb": "node test-mongodb.js",
-    "test-seal": "node -e \"require('./src/utils/sealIntegrationTest.ts').sealIntegrationTester.runAllTests()\""
+    "setup-mongodb": "node scripts/setup-mongodb.js"
   },
   "dependencies": {
     "@mysten/dapp-kit": "^0.18.0",
@@ -30,7 +28,6 @@
     "mongoose": "^8.18.2",
     "next": "15.5.4",
     "openai": "^4.20.0",
-    "pixel-retroui": "^2.1.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "uuid": "^9.0.0",

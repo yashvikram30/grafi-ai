@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   (process.env.NODE_ENV === 'production' ? '' : 'mongodb://localhost:27017');
-const DB_NAME = process.env.MONGODB_DB_NAME || 'decentralized_canva';
+const DB_NAME = process.env.MONGODB_DB_NAME || 'grafi_ai';
 
 let isConnected = false;
 

@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 
-// Utility functions for WalrusCanvas AI
+// Utility functions for Grafi AI
 
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);

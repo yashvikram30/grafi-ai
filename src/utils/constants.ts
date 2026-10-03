@@ -1,4 +1,4 @@
-// Constants for WalrusCanvas AI
+// Constants for Grafi AI
 
 export const CANVAS_CONFIG = {
   DEFAULT_WIDTH: 800,

@@ -11,7 +11,8 @@ import { ToastContainer } from '../UI/Toast';
 import { useToast } from '@/hooks/useToast';
 import { cn } from '@/utils/helpers';
 import { initializeFonts } from '@/utils/fontLoader';
-import WalletStatus from '../Wallet/WalletStatus';
+import AppHeader from '../UI/AppHeader';
+import { ZoomIn, ZoomOut } from 'lucide-react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 
 interface CanvasEditorProps {
@@ -132,27 +133,15 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
   }
 
   return (
-    <div className={cn("h-screen", className)}>
-      {/* Top Bar - Full Width Header */}
-      <div className="w-full header relative overflow-hidden p-4">
-        <div className="relative px-24 py-6 flex justify-between items-center max-w-7xl mx-auto">
-          <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-bold text-white">WalrusCanvas AI</h1>
-          </div>
-          
-          <div className="flex items-center space-x-6">
-            {/* Wallet Status - Simplified */}
-            <WalletStatus onConnect={() => {}} />
-          </div>
-        </div>
-      </div>
+    <div className={cn("h-screen flex flex-col", className)}>
+      <AppHeader />
 
       {/* Main Content Area */}
-      <div className="h-[calc(100vh-80px)] flex">
+      <div className="flex-1 min-h-0 flex">
         {/* Left Sidebar */}
         <div className="sidebar flex-none" style={{ width: 272 }}>
-          <div className="p-4 border-b-2 border-[var(--retro-border)]">
-            <h2 className="text-lg font-bold text-[var(--retro-text)]">Tools</h2>
+          <div className="px-4 py-3 border-b-2 border-[var(--retro-border)]">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--retro-text)]">Tools</h2>
           </div>
           
           <div className="flex-1 overflow-y-auto">
@@ -175,11 +164,11 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
         </div>
 
         {/* Main Canvas Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col relative">
           {/* Canvas Container */}
           <div 
             ref={containerRef}
-            className="flex-1 flex items-center justify-center p-8 overflow-hidden"
+            className="flex-1 flex items-center justify-center p-8 overflow-hidden dot-grid"
           >
             <div ref={canvasContainerRef} className="relative">
             <div className="retro-panel p-4 relative">
@@ -200,10 +189,37 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
             
             </div>
           </div>
+
+          {/* Floating zoom control */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center bg-white border-2 border-black rounded-lg shadow-[3px_3px_0_#000] overflow-hidden">
+            <button
+              onClick={() => setZoom(zoom * 0.8)}
+              className="p-2 hover:bg-[var(--retro-accent)] transition-colors"
+              title="Zoom out"
+              aria-label="Zoom out"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setZoom(1)}
+              className="px-3 py-2 min-w-[4.5rem] text-sm font-bold border-x-2 border-black hover:bg-[var(--retro-accent)] transition-colors"
+              title="Reset zoom to 100%"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <button
+              onClick={() => setZoom(zoom * 1.2)}
+              className="p-2 hover:bg-[var(--retro-accent)] transition-colors"
+              title="Zoom in"
+              aria-label="Zoom in"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Right Sidebar - Properties */}
-        <div className="sidebar flex-none" style={{ width: 320 }}>
+        <div className="sidebar flex-none border-r-0! border-l-2 border-[var(--retro-border)]" style={{ width: 320 }}>
           <PropertyPanel 
             canvas={canvas}
             selectedObjects={selectedObjects}
