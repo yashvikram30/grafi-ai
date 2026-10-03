@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { fabric } from '@/lib/fabric';
-import { useCanvas } from '@/hooks/useCanvas';
+import { useCanvas, ToolId } from '@/hooks/useCanvas';
 import Toolbar from './Toolbar';
 import PropertyPanel from './PropertyPanel';
 import AIImageModal from '../AI/AIImageModal';
@@ -26,7 +26,10 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
   // Removed AI Text modal usage
   const [showAIImageModal, setShowAIImageModal] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [selectedTool, setSelectedTool] = useState<'select' | 'text' | 'rectangle' | 'circle' | 'image' | 'pencil'>('select');
+  const [selectedTool, setSelectedTool] = useState<ToolId>('select');
+  // Bumped whenever an object or color changes outside React state, so the toolbox and panel re-read it
+  const [revision, setRevision] = useState(0);
+  const bumpRevision = useCallback(() => setRevision(r => r + 1), []);
   const [activeAIPanel, setActiveAIPanel] = useState<'image' | null>(null);
   const [designsRefreshTrigger, setDesignsRefreshTrigger] = useState(0);
   
@@ -44,10 +47,8 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
     canvasRef,
     selectedObjects,
     zoom,
-    drawingMode,
-    addText,
-    addRectangle,
-    addCircle,
+    toolSettings,
+    updateToolSettings,
     addImage,
     deleteSelected,
     clearCanvas,
@@ -71,6 +72,52 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
     initializeFonts();
   }, []);
 
+
+  // One place that keeps the toolbox, the canvas mode and the properties panel in sync
+  const handleSelectTool = useCallback((tool: ToolId) => {
+    setSelectedTool(tool);
+    setActiveAIPanel(null);
+    setDrawingMode(tool === 'image' ? 'select' : tool);
+  }, [setDrawingMode]);
+
+  const handleAddImage = useCallback((url: string) => {
+    addImage(url);
+    handleSelectTool('select');
+  }, [addImage, handleSelectTool]);
+
+  // The toolbox palette edits whatever the active tool would draw with
+  const objectColorKey = (obj: fabric.Object): 'fill' | 'stroke' | null =>
+    obj.type === 'image' ? null : obj.type === 'path' ? 'stroke' : 'fill';
+  const colorableSelection = selectedObjects.filter(o => objectColorKey(o) !== null);
+  const asHex = (value: unknown, fallback: string) =>
+    typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+
+  let colorTarget: { label: string; color: string; apply: (c: string) => void };
+  if (selectedTool === 'pencil') {
+    colorTarget = { label: 'Brush color', color: toolSettings.brushColor, apply: c => updateToolSettings({ brushColor: c }) };
+  } else if (selectedTool === 'rectangle' || selectedTool === 'circle') {
+    colorTarget = { label: 'Fill color', color: toolSettings.fill, apply: c => updateToolSettings({ fill: c, fillEnabled: true }) };
+  } else if (selectedTool === 'text') {
+    colorTarget = { label: 'Text color', color: toolSettings.fontColor, apply: c => updateToolSettings({ fontColor: c }) };
+  } else if (selectedTool === 'select' && colorableSelection.length > 0) {
+    const first = colorableSelection[0];
+    const key = objectColorKey(first)!;
+    colorTarget = {
+      label: colorableSelection.length > 1 ? 'Selection color' : (key === 'stroke' ? 'Stroke color' : 'Fill color'),
+      color: asHex((first as any)[key], '#000000'),
+      apply: c => {
+        colorableSelection.forEach(o => { o.set(objectColorKey(o)!, c); o.dirty = true; });
+        canvas?.requestRenderAll();
+        bumpRevision();
+      },
+    };
+  } else {
+    colorTarget = {
+      label: 'Canvas color',
+      color: asHex(canvas?.backgroundColor, '#ffffff'),
+      apply: c => { setBackgroundColor(c); bumpRevision(); },
+    };
+  }
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -139,7 +186,7 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
       {/* Main Content Area */}
       <div className="flex-1 min-h-0 flex">
         {/* Left Sidebar */}
-        <div className="sidebar flex-none" style={{ width: 272 }}>
+        <div className="sidebar flex-none" style={{ width: 208 }}>
           <div className="px-4 py-3 border-b-2 border-[var(--retro-border)]">
             <h2 className="text-sm font-bold uppercase tracking-wide text-[var(--retro-text)]">Tools</h2>
           </div>
@@ -147,16 +194,16 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
           <div className="flex-1 overflow-y-auto">
             <Toolbar 
               canvas={canvas}
-              drawingMode={drawingMode}
+              activeTool={selectedTool}
+              aiActive={activeAIPanel === 'image'}
+              onSelectTool={handleSelectTool}
+              colorLabel={colorTarget.label}
+              color={colorTarget.color}
+              onPickColor={colorTarget.apply}
               onDeleteSelected={deleteSelected}
               onClearCanvas={clearCanvas}
-              onSetBackgroundColor={setBackgroundColor}
-              onSetZoom={setZoom}
-              onSetDrawingMode={setDrawingMode}
-              onSetTool={setSelectedTool}
               onAIImage={() => setActiveAIPanel('image')}
               onSave={() => walrusActionRef.current?.('save')}
-              zoom={zoom}
               isWalletConnected={isConnected}
             />
             
@@ -223,9 +270,17 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
           <PropertyPanel 
             canvas={canvas}
             selectedObjects={selectedObjects}
+            activeTool={selectedTool}
+            onSelectTool={handleSelectTool}
+            toolSettings={toolSettings}
+            onToolSettingsChange={updateToolSettings}
+            revision={revision}
+            onChange={bumpRevision}
+            onSetBackgroundColor={setBackgroundColor}
+            onDeleteSelected={deleteSelected}
             onExport={exportCanvas}
-            onAddImage={addImage}
-            selectedTool={selectedTool}
+            onAddImage={handleAddImage}
+            onOpenAI={() => setActiveAIPanel('image')}
             activeAIPanel={activeAIPanel}
             onCloseAIPanel={() => setActiveAIPanel(null)}
             onLoad={loadCanvas}

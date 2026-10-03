@@ -296,3 +296,58 @@
   .animate-float, .animate-blink, .animate-marquee { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ---------- Paint-style toolbox ---------- */
+.paint-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 #000;
+  cursor: pointer;
+  transition: background-color 0.1s, transform 0.1s, box-shadow 0.1s;
+}
+.paint-tool:hover { background: var(--retro-accent); }
+/* Pressed-in look for the active tool, like a depressed toolbox button */
+.paint-tool[aria-pressed='true'] {
+  background: var(--retro-accent);
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.45);
+  transform: translate(1px, 1px);
+}
+.paint-tool:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+
+.paint-inset {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 3px;
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.paint-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1.5px solid #000;
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+.paint-swatch:hover { transform: scale(1.15); z-index: 1; position: relative; }
+
+/* Text inputs and selects in the properties panel */
+.field {
+  width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  color: #000;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.12);
+}
+.field:focus { outline: none; box-shadow: 0 0 0 3px var(--retro-accent); }
+.field:disabled { opacity: 0.5; }

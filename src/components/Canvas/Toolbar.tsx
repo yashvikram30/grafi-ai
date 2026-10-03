@@ -1,295 +1,218 @@
 'use client';
 
 import React from 'react';
-import { 
-  Type, 
-  Square, 
-  Circle, 
+import {
+  Type,
+  Square,
+  Circle,
   Image as ImageIcon,
-  Trash2, 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCcw,
+  Trash2,
   Download,
-  MousePointer,
-  X,
-  Sparkles,
+  MousePointer2,
+  Eraser,
   Wand2,
   Save,
-  Pencil
+  Pencil,
 } from 'lucide-react';
-import CollapsibleSection from '../retro-ui/collapsible-section';
 import { fabric } from '@/lib/fabric';
 import { cn } from '@/utils/helpers';
-import { DrawingMode } from '@/hooks/useCanvas';
-// Image upload modal is managed at the CanvasEditor level
+import { ToolId } from '@/hooks/useCanvas';
 
 interface ToolbarProps {
   canvas: fabric.Canvas | null;
-  drawingMode: DrawingMode;
+  activeTool: ToolId;
+  /** The AI Image panel is open */
+  aiActive?: boolean;
+  onSelectTool: (tool: ToolId) => void;
+  /** What the palette is currently editing, e.g. "Brush color" */
+  colorLabel: string;
+  color: string;
+  onPickColor: (color: string) => void;
   onDeleteSelected: () => void;
   onClearCanvas: () => void;
-  onSetBackgroundColor: (color: string) => void;
-  onSetZoom: (zoom: number) => void;
-  onSetDrawingMode: (mode: DrawingMode) => void;
-  onSetTool: (tool: 'select' | 'text' | 'rectangle' | 'circle' | 'image' | 'pencil') => void;
-  onAIText?: () => void;
   onAIImage?: () => void;
   onSave?: () => void;
-  zoom: number;
   isWalletConnected?: boolean;
 }
 
+const TOOLS: { id: ToolId; label: string; icon: React.ElementType; hint: string }[] = [
+  { id: 'select', label: 'Select', icon: MousePointer2, hint: 'Click to select and move objects' },
+  { id: 'pencil', label: 'Pencil', icon: Pencil, hint: 'Draw freehand on the canvas' },
+  { id: 'text', label: 'Text', icon: Type, hint: 'Drag on the canvas to draw a text box' },
+  { id: 'rectangle', label: 'Rectangle', icon: Square, hint: 'Drag on the canvas to draw a rectangle' },
+  { id: 'circle', label: 'Ellipse', icon: Circle, hint: 'Drag on the canvas to draw an ellipse' },
+  { id: 'image', label: 'Image', icon: ImageIcon, hint: 'Add a picture from your device or a link' },
+];
+
+// A classic paint-style palette: 3 rows of 8
+const PALETTE = [
+  '#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8',
+  '#ffffff', '#c3c3c3', '#b97a57', '#ffaec9', '#ffc90e', '#efe4b0', '#b5e61d', '#99d9ea',
+  '#3f48cc', '#a349a4', '#7092be', '#c8bfe7', '#97f0e5', '#ff90e8', '#ffd23f', '#2f4f4f',
+];
+
+const GROUP_LABEL = 'text-[10px] font-bold uppercase tracking-wider text-neutral-500 mb-1.5';
+
 export default function Toolbar({
   canvas,
-  drawingMode,
+  activeTool,
+  aiActive = false,
+  onSelectTool,
+  colorLabel,
+  color,
+  onPickColor,
   onDeleteSelected,
   onClearCanvas,
-  onSetBackgroundColor,
-  onSetZoom,
-  onSetDrawingMode,
-  onSetTool,
-  onAIText,
   onAIImage,
   onSave,
-  zoom,
-  isWalletConnected = false
+  isWalletConnected = false,
 }: ToolbarProps) {
-
-  const handleImageClick = () => {
-    onSetTool('image');
-  };
-
-
-  const handleZoomIn = () => {
-    onSetZoom(zoom * 1.2);
-  };
-
-  const handleZoomOut = () => {
-    onSetZoom(zoom * 0.8);
-  };
+  const activeInfo = TOOLS.find((t) => t.id === activeTool) ?? TOOLS[0];
+  const current = color.toLowerCase();
 
   const handleExport = () => {
-    if (canvas) {
-      const dataURL = canvas.toDataURL({ format: 'png' });
-      const link = document.createElement('a');
-      link.download = 'grafi-ai-design.png';
-      link.href = dataURL;
-      link.click();
-    }
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = 'grafi-ai-design.png';
+    link.href = canvas.toDataURL({ format: 'png' });
+    link.click();
   };
 
-  const tools: { mode: NonNullable<DrawingMode>; label: string; icon: React.ElementType; hint: string }[] = [
-    { mode: 'select', label: 'Select', icon: MousePointer, hint: 'Select and move objects' },
-    { mode: 'pencil', label: 'Pencil', icon: Pencil, hint: 'Draw freehand' },
-    { mode: 'text', label: 'Text', icon: Type, hint: 'Click the canvas to add text' },
-    { mode: 'rectangle', label: 'Rectangle', icon: Square, hint: 'Drag to draw a rectangle' },
-    { mode: 'circle', label: 'Circle', icon: Circle, hint: 'Drag to draw a circle' },
-  ];
-
-  const colors = Array.from(new Set([
-    '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FF8000', '#800080',
-    '#FF4444', '#00CCCC', '#4488FF', '#44FF44', '#FFFF44', '#FF44FF', '#44FFFF', '#FF8844', '#8844FF', '#FF44CC',
-    '#FF1493', '#32CD32', '#FF6347', '#00CED1', '#FF4500', '#9370DB', '#20B2AA', '#FF69B4', '#FFD700', '#FFA500',
-    '#FFB6C1', '#98FB98', '#87CEEB', '#DDA0DD', '#F0E68C', '#FFA07A', '#FFC0CB', '#D8BFD8', '#F5DEB3', '#97F0E5',
-    '#8B0000', '#006400', '#00008B', '#B8860B', '#008B8B', '#2F4F4F', '#8B4513', '#2E8B57', '#4B0082',
-  ]));
-
   return (
-    <div className="px-3 py-3">
-      {/* Drawing Tools */}
-      <CollapsibleSection title="Drawing Tools" defaultExpanded>
-        <div className="grid grid-cols-3 gap-2">
-          {tools.map(({ mode, label, icon: Icon, hint }) => (
+    <div className="p-2 space-y-3">
+      {/* Tool grid */}
+      <section aria-label="Tools">
+        <div className={GROUP_LABEL}>Tools</div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {TOOLS.map(({ id, label, icon: Icon, hint }) => (
             <button
-              key={label}
-              onClick={() => {
-                onSetDrawingMode(mode);
-                onSetTool(mode);
-              }}
-              className={cn(
-                "retro-button flex flex-col items-center justify-center gap-1 px-1 py-3 text-center",
-                drawingMode === mode ? "bg-[var(--retro-accent)] shadow-[1px_1px_0_#000] translate-y-px" : "hover:bg-[var(--retro-accent)]"
-              )}
-              title={hint}
-              aria-pressed={drawingMode === mode}
+              key={id}
+              onClick={() => onSelectTool(id)}
+              className="paint-tool"
+              aria-pressed={activeTool === id && !aiActive}
+              aria-label={label}
+              title={`${label}: ${hint}`}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-xs font-semibold">{label}</span>
             </button>
           ))}
-
-          <button
-            onClick={handleImageClick}
-            className="retro-button flex flex-col items-center justify-center gap-1 px-1 py-3 text-center hover:bg-[var(--retro-accent)]"
-            title="Add an image from your device"
-          >
-            <ImageIcon className="w-5 h-5" aria-hidden="true" />
-            <span className="text-xs font-semibold">Image</span>
-          </button>
         </div>
-      </CollapsibleSection>
 
-      {/* AI Tools */}
-      {(onAIText || onAIImage) && (
-        <CollapsibleSection title="AI Tools" defaultExpanded>
-          <div className="space-y-4">
-            {onAIText && (
-              <button
-                onClick={onAIText}
-                className="retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors hover:bg-[var(--retro-accent)] text-center"
-                title="AI Text Generation"
-              >
-                <Sparkles className="w-5 h-5" />
-                <span className="text-sm font-bold text-center">AI Text</span>
-              </button>
-            )}
-            
-            {onAIImage && (
-              <button
-                onClick={onAIImage}
-                className="retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors hover:bg-[var(--retro-accent)] text-center"
-                title="AI Image Generation"
-              >
-                <Wand2 className="w-5 h-5" />
-                <span className="text-sm font-bold text-center">AI Image</span>
-              </button>
-            )}
+        {/* Tool options box, like the one under the toolbox in Paint */}
+        <div className="paint-inset mt-2 px-2 py-1.5 min-h-[3.25rem]" aria-live="polite">
+          <div className="text-xs font-bold">{aiActive ? 'AI Image' : activeInfo.label}</div>
+          <div className="text-[11px] leading-snug text-neutral-600">
+            {aiActive ? 'Describe an image and add it to the canvas' : activeInfo.hint}
           </div>
-        </CollapsibleSection>
+        </div>
+      </section>
+
+      {/* AI */}
+      {onAIImage && (
+        <button
+          onClick={onAIImage}
+          aria-pressed={aiActive}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-[var(--pop-pink)] border-2 border-black rounded text-sm font-bold transition-all",
+            aiActive
+              ? "shadow-[inset_2px_2px_0_rgba(0,0,0,0.4)] translate-x-px translate-y-px"
+              : "shadow-[2px_2px_0_#000] hover:-translate-y-px hover:shadow-[3px_3px_0_#000] active:translate-y-px active:shadow-[1px_1px_0_#000]"
+          )}
+          title="Generate an image with AI"
+        >
+          <Wand2 className="w-4 h-4" />
+          AI Image
+        </button>
       )}
 
+      <hr className="border-t-2 border-black/15" />
 
-      {/* Color Palette */}
-      <CollapsibleSection title="Background Color" defaultExpanded={false}>
-        <div className="space-y-3">
-          <div className="grid grid-cols-8 gap-1.5">
-            {colors.map((color, i) => (
-              <button
-                key={`${color}-${i}`}
-                onClick={() => onSetBackgroundColor(color)}
-                className={cn(
-                  "w-6 h-6 rounded-full border-2 hover:scale-110 transition-transform",
-                  canvas?.backgroundColor === color ? "border-black ring-2 ring-[var(--retro-accent)] scale-110" : "border-gray-500"
-                )}
-                style={{ backgroundColor: color }}
-                title={color}
-                aria-label={`Set background to ${color}`}
-              />
-            ))}
+      {/* Colors */}
+      <section aria-label="Colors">
+        <div className={GROUP_LABEL}>{colorLabel}</div>
+        <div className="flex items-stretch gap-2 mb-2">
+          <div
+            className="paint-inset w-12 h-12 shrink-0 p-1"
+            title={`Current color: ${current}`}
+          >
+            <div className="w-full h-full border border-black/60" style={{ backgroundColor: current }} />
           </div>
-          <label className="flex items-center justify-between gap-3 text-xs font-semibold">
-            Custom color
+          <label
+            className="flex-1 flex flex-col items-center justify-center gap-0.5 text-[11px] font-semibold border-2 border-black rounded bg-white cursor-pointer hover:bg-[var(--retro-accent)] transition-colors"
+            title="Pick any color"
+          >
+            Edit colors
             <input
               type="color"
-              onChange={(e) => onSetBackgroundColor(e.target.value)}
-              className="h-8 w-14 cursor-pointer border-2 border-black rounded bg-white p-0.5"
-              aria-label="Pick a custom background color"
+              value={current}
+              onChange={(e) => onPickColor(e.target.value)}
+              className="sr-only"
+              aria-label={`Pick a custom ${colorLabel.toLowerCase()}`}
             />
           </label>
         </div>
-      </CollapsibleSection>
-
-      {/* Zoom Controls */}
-      <CollapsibleSection title="Zoom" defaultExpanded={false}>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-3">
+        <div className="grid grid-cols-8 gap-[3px]">
+          {PALETTE.map((swatch) => (
             <button
-              onClick={handleZoomOut}
-              className="retro-button p-3 hover:bg-[var(--retro-accent)] text-center"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-5 h-5" />
-            </button>
-            
-            <div className="flex-1 text-center">
-              <span className="text-lg text-[var(--retro-text)] font-bold text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-            </div>
-            
-            <button
-              onClick={handleZoomIn}
-              className="retro-button p-3 hover:bg-[var(--retro-accent)] text-center"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-5 h-5" />
-            </button>
-          </div>
-          
-          <button
-            onClick={() => onSetZoom(1)}
-            className="retro-button w-full flex items-center justify-center space-x-3 p-4 hover:bg-[var(--retro-accent)] text-center"
-            title="Reset Zoom to 100%"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span className="text-sm font-bold text-center">Reset Zoom</span>
-          </button>
+              key={swatch}
+              onClick={() => onPickColor(swatch)}
+              className={cn(
+                'paint-swatch',
+                current === swatch && 'ring-2 ring-offset-1 ring-black'
+              )}
+              style={{ backgroundColor: swatch }}
+              title={swatch}
+              aria-label={`Set ${colorLabel.toLowerCase()} to ${swatch}`}
+            />
+          ))}
         </div>
-      </CollapsibleSection>
+      </section>
 
-      {/* Storage Actions */}
-      <CollapsibleSection title="Storage" defaultExpanded={false}>
-        <div className="space-y-4">
+      <hr className="border-t-2 border-black/15" />
+
+      {/* Actions */}
+      <section aria-label="Actions">
+        <div className={GROUP_LABEL}>Actions</div>
+        <div className="grid grid-cols-4 gap-1.5">
+          <button
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDeleteSelected(); }}
+            className="paint-tool hover:!bg-red-500 hover:!text-white"
+            aria-label="Delete selected"
+            title="Delete selected objects (Del)"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onClearCanvas}
+            className="paint-tool hover:!bg-red-500 hover:!text-white"
+            aria-label="Clear canvas"
+            title="Clear the whole canvas"
+          >
+            <Eraser className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleExport}
+            className="paint-tool"
+            aria-label="Export PNG"
+            title="Export the canvas as a PNG"
+          >
+            <Download className="w-4 h-4" />
+          </button>
           <button
             onClick={() => {
-              onSetDrawingMode('select');
-              onSetTool('select');
+              onSelectTool('select');
               onSave?.();
             }}
             disabled={!isWalletConnected}
-            className={cn(
-              "retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors text-center",
-              isWalletConnected
-                ? "hover:bg-[var(--retro-accent)]"
-                : "opacity-50 cursor-not-allowed"
-            )}
-            title={!isWalletConnected ? "Connect wallet to save/load designs" : "Save/Load design to/from Walrus"}
+            className="paint-tool disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label="Save or load"
+            title={isWalletConnected ? 'Save or load a design (Ctrl+S)' : 'Connect a wallet to save'}
           >
-            <Save className="w-5 h-5" />
-            <span className="text-sm font-bold text-center">
-              {isWalletConnected ? "Save/Load" : "Connect Wallet to Save/Load"}
-            </span>
+            <Save className="w-4 h-4" />
           </button>
         </div>
-      </CollapsibleSection>
-
-      
-
-      {/* Actions */}
-      <CollapsibleSection title="Actions" defaultExpanded={false}>
-        <div className="space-y-4">
-          <button
-            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); onDeleteSelected(); }}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDeleteSelected(); }}
-            className="retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors hover:bg-red-500 hover:text-white text-center"
-          >
-            <Trash2 className="w-5 h-5" />
-            <span className="text-sm font-bold text-center">Delete Selected</span>
-          </button>
-          
-          <button
-            onClick={onClearCanvas}
-            className="retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors hover:bg-red-500 hover:text-white text-center"
-          >
-            <X className="w-5 h-5" />
-            <span className="text-sm font-bold text-center">Clear Canvas</span>
-          </button>
-          
-          <button
-            onClick={handleExport}
-            className="retro-button w-full flex items-center justify-center space-x-3 p-4 transition-colors hover:bg-[var(--retro-accent)] text-center"
-          >
-            <Download className="w-5 h-5" />
-            <span className="text-sm font-bold text-center">Export PNG</span>
-          </button>
-        </div>
-      </CollapsibleSection>
-
-      {/* Image Modal */}
-      {/* Managed by parent */}
-      
-      
+      </section>
     </div>
   );
 }

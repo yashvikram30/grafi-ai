@@ -4,6 +4,33 @@ import { CANVAS_CONFIG } from '@/utils/constants';
 
 export type DrawingMode = 'select' | 'rectangle' | 'circle' | 'text' | 'pencil' | null;
 
+/** Every tool in the toolbox. `image` is a panel-only tool: the canvas stays in select mode. */
+export type ToolId = 'select' | 'pencil' | 'text' | 'rectangle' | 'circle' | 'image';
+
+/** Settings the drawing tools apply to whatever they create next. */
+export interface ToolSettings {
+  brushColor: string;
+  brushWidth: number;
+  fill: string;
+  /** false draws shapes with no fill */
+  fillEnabled: boolean;
+  stroke: string;
+  strokeWidth: number;
+  fontFamily: string;
+  fontColor: string;
+}
+
+export const DEFAULT_TOOL_SETTINGS: ToolSettings = {
+  brushColor: '#000000',
+  brushWidth: 4,
+  fill: '#97f0e5',
+  fillEnabled: true,
+  stroke: '#000000',
+  strokeWidth: 2,
+  fontFamily: 'Arial',
+  fontColor: '#000000',
+};
+
 export interface CanvasState {
   canvas: fabric.Canvas | null;
   isReady: boolean;
@@ -32,6 +59,10 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
     isPencilDrawing: false,
     pencilPath: null,
   });
+
+  const [toolSettings, setToolSettings] = useState<ToolSettings>(DEFAULT_TOOL_SETTINGS);
+  // Event handlers registered once on the canvas read the latest settings from this ref
+  const toolSettingsRef = useRef<ToolSettings>(DEFAULT_TOOL_SETTINGS);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef(state);
@@ -83,8 +114,8 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
       // Initialize free drawing brush for pencil mode upfront
       canvas.isDrawingMode = false;
       canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-      canvas.freeDrawingBrush.color = '#000000';
-      canvas.freeDrawingBrush.width = 2;
+      canvas.freeDrawingBrush.color = toolSettingsRef.current.brushColor;
+      canvas.freeDrawingBrush.width = toolSettingsRef.current.brushWidth;
 
       // Set up event listeners
       canvas.on('selection:created', (e) => {
@@ -255,7 +286,7 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
             height: 0,
             fontSize: 20,
             fill: 'transparent',
-            fontFamily: 'Arial',
+            fontFamily: toolSettingsRef.current.fontFamily,
             selectable: false,
             evented: false,
             textAlign: 'left',
@@ -379,19 +410,21 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
           // Finalize the shape
           const shape = currentState.currentShape;
           if (currentState.drawingMode === 'rectangle') {
+            const ts = toolSettingsRef.current;
             shape.set({
-              fill: '#ff0000',
-              stroke: '#000000',
-              strokeWidth: 1,
+              fill: ts.fillEnabled ? ts.fill : 'transparent',
+              stroke: ts.stroke,
+              strokeWidth: ts.strokeWidth,
               strokeDashArray: undefined,
               selectable: true,
               evented: true
             });
           } else if (currentState.drawingMode === 'circle') {
+            const ts = toolSettingsRef.current;
             shape.set({
-              fill: '#00ff00',
-              stroke: '#000000',
-              strokeWidth: 1,
+              fill: ts.fillEnabled ? ts.fill : 'transparent',
+              stroke: ts.stroke,
+              strokeWidth: ts.strokeWidth,
               strokeDashArray: undefined,
               selectable: true,
               evented: true
@@ -407,7 +440,8 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
             
             textbox.set({
               text: '',
-              fill: '#000000',
+              fill: toolSettingsRef.current.fontColor,
+              fontFamily: toolSettingsRef.current.fontFamily,
               stroke: undefined,
               strokeWidth: 0,
               strokeDashArray: undefined,
@@ -795,8 +829,8 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
       if (mode === 'pencil') {
         state.canvas.isDrawingMode = true;
         state.canvas.freeDrawingBrush = new fabric.PencilBrush(state.canvas);
-        state.canvas.freeDrawingBrush.color = '#000000';
-        state.canvas.freeDrawingBrush.width = 2;
+        state.canvas.freeDrawingBrush.color = toolSettingsRef.current.brushColor;
+        state.canvas.freeDrawingBrush.width = toolSettingsRef.current.brushWidth;
       } else {
         state.canvas.isDrawingMode = false;
       }
@@ -805,6 +839,19 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
       state.canvas.hoverCursor = cursor;
     }
   }, [state.canvas, state.isDrawing, state.currentShape, resetDrawingState]);
+
+  const updateToolSettings = useCallback((patch: Partial<ToolSettings>) => {
+    const next = { ...toolSettingsRef.current, ...patch };
+    toolSettingsRef.current = next;
+    setToolSettings(next);
+
+    // Brush changes apply straight away, even mid-session in pencil mode
+    const brush = fabricCanvasRef.current?.freeDrawingBrush;
+    if (brush) {
+      brush.color = next.brushColor;
+      brush.width = next.brushWidth;
+    }
+  }, []);
 
   useEffect(() => {
     initializeCanvas();
@@ -834,6 +881,8 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
 
   return {
     ...state,
+    toolSettings,
+    updateToolSettings,
     canvasRef,
     addText,
     addRectangle,
