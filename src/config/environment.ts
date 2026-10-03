@@ -78,11 +78,8 @@ if (typeof window === 'undefined' && process.env.NEXT_PHASE !== 'phase-productio
   try {
     validateEnvironment();
   } catch (error) {
+    // Only warn: missing AI keys should disable AI features, not crash the whole editor
     const message = error instanceof Error ? error.message : String(error);
-    // Don't throw in production to avoid breaking the app
-    if (process.env.NODE_ENV === 'development') {
-      throw error;
-    }
     console.warn(`[config] ${message}`);
   }
 }

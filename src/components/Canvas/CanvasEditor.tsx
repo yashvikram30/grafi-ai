@@ -11,7 +11,7 @@ import { ToastContainer } from '../UI/Toast';
 import { useToast } from '@/hooks/useToast';
 import { cn } from '@/utils/helpers';
 import { initializeFonts } from '@/utils/fontLoader';
-import AppHeader from '../UI/AppHeader';
+import DisconnectButton from '../Wallet/DisconnectButton';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 
@@ -49,6 +49,7 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
     zoom,
     toolSettings,
     updateToolSettings,
+    shapeCreatedCount,
     addImage,
     deleteSelected,
     clearCanvas,
@@ -79,6 +80,14 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
     setActiveAIPanel(null);
     setDrawingMode(tool === 'image' ? 'select' : tool);
   }, [setDrawingMode]);
+
+  // After drawing a shape or text box, hand over to the Select tool so the properties
+  // panel immediately edits the thing that was just drawn.
+  const handleSelectToolRef = useRef(handleSelectTool);
+  handleSelectToolRef.current = handleSelectTool;
+  useEffect(() => {
+    if (shapeCreatedCount > 0) handleSelectToolRef.current('select');
+  }, [shapeCreatedCount]);
 
   const handleAddImage = useCallback((url: string) => {
     addImage(url);
@@ -181,8 +190,6 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
 
   return (
     <div className={cn("h-screen flex flex-col", className)}>
-      <AppHeader />
-
       {/* Main Content Area */}
       <div className="flex-1 min-h-0 flex">
         {/* Left Sidebar */}
@@ -207,6 +214,11 @@ export default function CanvasEditor({ className }: CanvasEditorProps) {
               isWalletConnected={isConnected}
             />
             
+          </div>
+
+          {/* Pinned to the bottom of the tools panel */}
+          <div className="flex-none p-2 border-t-2 border-black">
+            <DisconnectButton />
           </div>
         </div>
 

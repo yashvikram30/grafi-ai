@@ -60,6 +60,8 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
     pencilPath: null,
   });
 
+  // Bumped each time a rectangle, ellipse or text box finishes drawing
+  const [shapeCreatedCount, setShapeCreatedCount] = useState(0);
   const [toolSettings, setToolSettings] = useState<ToolSettings>(DEFAULT_TOOL_SETTINGS);
   // Event handlers registered once on the canvas read the latest settings from this ref
   const toolSettingsRef = useRef<ToolSettings>(DEFAULT_TOOL_SETTINGS);
@@ -491,6 +493,7 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
           
           shape.setCoords();
           canvas.setActiveObject(shape);
+          setShapeCreatedCount(count => count + 1);
         } else {
           // Remove shape if too small
           canvas.remove(currentState.currentShape);
@@ -883,6 +886,7 @@ export function useCanvas(containerRef: React.RefObject<HTMLDivElement | null>) 
     ...state,
     toolSettings,
     updateToolSettings,
+    shapeCreatedCount,
     canvasRef,
     addText,
     addRectangle,

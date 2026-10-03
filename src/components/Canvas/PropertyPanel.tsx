@@ -71,9 +71,9 @@ interface PropertyPanelProps {
 const TOOL_INFO: Record<ToolId, { title: string; hint: string; icon: React.ElementType }> = {
   select: { title: 'Select', hint: 'Click an object on the canvas to edit it.', icon: MousePointer2 },
   pencil: { title: 'Pencil', hint: 'Draw freehand. Settings apply to your next stroke.', icon: Pencil },
-  text: { title: 'Text', hint: 'Drag on the canvas to draw a text box, then type.', icon: Type },
-  rectangle: { title: 'Rectangle', hint: 'Drag on the canvas to draw. Settings apply to the next shape.', icon: Square },
-  circle: { title: 'Ellipse', hint: 'Drag on the canvas to draw. Settings apply to the next shape.', icon: Circle },
+  text: { title: 'Text', hint: 'Drag on the canvas to draw a text box, then type. Afterwards you can restyle it with the Select tool.', icon: Type },
+  rectangle: { title: 'Rectangle', hint: 'Drag on the canvas to draw. The tool then switches to Select so you can fine-tune the shape.', icon: Square },
+  circle: { title: 'Ellipse', hint: 'Drag on the canvas to draw. The tool then switches to Select so you can fine-tune the shape.', icon: Circle },
   image: { title: 'Image', hint: 'Add a picture to the canvas.', icon: ImageIcon },
 };
 
