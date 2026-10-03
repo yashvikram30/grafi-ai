@@ -215,7 +215,7 @@ export class EncryptionHealthMonitor {
 
     try {
       // Test Sui network connection
-      const response = await fetch(process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://fullnode.testnet.sui.io', {
+      const response = await fetch(process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://sui-testnet-rpc.publicnode.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

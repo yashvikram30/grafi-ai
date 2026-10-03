@@ -62,12 +62,12 @@ export const DesignCard: React.FC<DesignCardProps> = ({
     if (isWideCard) {
       return (
         <div 
-          className="w-20 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border-2 border-gray-200 flex-shrink-0"
+          className="w-20 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded flex items-center justify-center border-2 border-black/20 flex-shrink-0"
           style={{ aspectRatio: width / height }}
         >
           <div className="text-center">
             <div className="text-lg mb-1">🎨</div>
-            <div className="text-xs text-gray-600">{elementCount}</div>
+            <div className="text-xs text-neutral-600">{elementCount}</div>
           </div>
         </div>
       );
@@ -75,12 +75,12 @@ export const DesignCard: React.FC<DesignCardProps> = ({
     
     return (
       <div 
-        className="w-full h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border-2 border-gray-200"
+        className="w-full h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded flex items-center justify-center border-2 border-black/20"
         style={{ aspectRatio: width / height }}
       >
         <div className="text-center">
-          <div className="text-2xl mb-1">🎨</div>
-          <div className="text-xs text-gray-600">{elementCount} elements</div>
+          <div className="text-base mb-1">🎨</div>
+          <div className="text-xs text-neutral-600">{elementCount} elements</div>
         </div>
       </div>
     );
@@ -88,17 +88,17 @@ export const DesignCard: React.FC<DesignCardProps> = ({
 
   if (isWideCard) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white rounded border-2 border-black/20 p-4 hover:shadow-md transition-shadow duration-200">
         <div className="flex flex-col items-center text-center">
           {/* Icon */}
           <div className="mb-3">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border-2 border-gray-200">
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded flex items-center justify-center border-2 border-black/20">
               <div className="text-5xl">🎨</div>
             </div>
           </div>
 
           {/* Name */}
-          <h3 className="font-medium text-gray-900 text-sm mb-3 truncate w-full" title={design.name}>
+          <h3 className="font-semibold text-black text-sm mb-3 truncate w-full" title={design.name}>
             {design.name}
           </h3>
 
@@ -107,7 +107,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
             <button
               onClick={handleLoadDesign}
               disabled={isLoading || isLoadingDesign}
-              className="bg-blue-600 text-white text-xs py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="bg-black text-white text-xs py-2 px-4 rounded hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isLoadingDesign ? (
                 <div className="flex items-center justify-center gap-1">
@@ -135,7 +135,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white rounded border-2 border-black/20 p-3 hover:shadow-md transition-shadow duration-200">
       {/* Thumbnail */}
       <div className="mb-3">
         {generateThumbnail(design.canvasData)}
@@ -143,17 +143,17 @@ export const DesignCard: React.FC<DesignCardProps> = ({
 
       {/* Design Info */}
       <div className="mb-3">
-        <h3 className="font-medium text-gray-900 text-sm truncate" title={design.name}>
+        <h3 className="font-semibold text-black text-sm truncate" title={design.name}>
           {design.name}
         </h3>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-neutral-600 mt-1">
           {formatDate(design.updatedAt)}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-neutral-600">
             {design.metadata.canvasSize.width} × {design.metadata.canvasSize.height}
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-neutral-600">
             • {design.metadata.elementCount} items
           </span>
         </div>
@@ -174,7 +174,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
         <button
           onClick={handleLoadDesign}
           disabled={isLoading || isLoadingDesign}
-          className="flex-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          className="flex-1 bg-black text-white text-xs py-2 px-3 rounded hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
         >
           {isLoadingDesign ? (
             <div className="flex items-center justify-center gap-1">
@@ -200,11 +200,11 @@ export const DesignCard: React.FC<DesignCardProps> = ({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-white rounded p-6 max-w-sm mx-4">
+            <h3 className="text-lg font-semibold text-black mb-2">
               Delete Design
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-neutral-600 text-sm mb-4">
               Are you sure you want to delete &quot;{design.name}&quot;? This action cannot be undone.
             </p>
             <div className="flex gap-3">
@@ -216,7 +216,7 @@ export const DesignCard: React.FC<DesignCardProps> = ({
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300 transition-colors duration-200"
+                className="flex-1 bg-gray-200 text-black py-2 px-4 rounded hover:bg-gray-300 transition-colors duration-200"
               >
                 Cancel
               </button>

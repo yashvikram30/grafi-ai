@@ -6,6 +6,7 @@ import { Wand2, Loader2, Plus, RefreshCw, X, Download } from 'lucide-react';
 import { useAI } from '@/hooks/useAI';
 import { cn } from '@/utils/helpers';
 import Image from 'next/image';
+import { Section, FieldLabel } from '../Canvas/PanelControls';
 
 interface AIImageModalProps {
   isOpen: boolean;
@@ -185,168 +186,122 @@ export default function AIImageModal({ isOpen, onClose, canvas, embedded = false
 
   if (embedded) {
     return (
-      <div className="h-full flex flex-col w-full">
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 w-full">
-          {/* Style Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Choose Style
-            </label>
-            <div className="grid grid-cols-1 gap-2">
-              {stylePresets.map((style) => (
-                <button
-                  key={style.id}
-                  onClick={() => setSelectedStyle(style.id)}
-                  className={cn(
-                    "p-3 text-left rounded-lg border-2 transition-all",
-                    selectedStyle === style.id
-                      ? "border-indigo-500 bg-indigo-50"
-                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                  )}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">{style.icon}</span>
-                    <div>
-                      <div className="font-medium text-sm text-gray-900">{style.label}</div>
-                      <div className="text-xs text-gray-500">{style.description}</div>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+      <div className="w-full">
+        <Section title="Style">
+          <div className="grid grid-cols-2 gap-1.5">
+            {stylePresets.map((style) => (
+              <button
+                key={style.id}
+                onClick={() => setSelectedStyle(style.id)}
+                aria-pressed={selectedStyle === style.id}
+                className={cn(
+                  'px-2.5 py-2 text-left border-2 border-black rounded transition-all',
+                  selectedStyle === style.id
+                    ? 'bg-[var(--retro-accent)] shadow-[inset_2px_2px_0_rgba(0,0,0,0.4)] translate-x-px translate-y-px'
+                    : 'bg-white shadow-[2px_2px_0_#000] hover:bg-[var(--retro-accent)]/40'
+                )}
+              >
+                <div className="text-xs font-bold">{style.label}</div>
+                <div className="text-[11px] leading-snug text-neutral-600">{style.description}</div>
+              </button>
+            ))}
           </div>
+        </Section>
 
-          {/* Size Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Image Size
-            </label>
-            <div className="grid grid-cols-3 gap-1">
-              {sizeOptions.map((size) => (
-                <button
-                  key={size.id}
-                  onClick={() => setSelectedSize(size.id)}
-                  className={cn(
-                    "px-2 py-2 text-xs font-medium rounded-lg transition-colors",
-                    selectedSize === size.id
-                      ? "bg-indigo-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  )}
-                >
-                  {size.label}
-                </button>
-              ))}
-            </div>
+        <Section title="Size">
+          <div className="grid grid-cols-3 gap-1.5">
+            {sizeOptions.map((size) => (
+              <button
+                key={size.id}
+                onClick={() => setSelectedSize(size.id)}
+                aria-pressed={selectedSize === size.id}
+                className={cn(
+                  'px-2 py-2 text-xs font-bold border-2 border-black rounded transition-all',
+                  selectedSize === size.id
+                    ? 'bg-[var(--retro-accent)] shadow-[inset_2px_2px_0_rgba(0,0,0,0.4)] translate-x-px translate-y-px'
+                    : 'bg-white shadow-[2px_2px_0_#000] hover:bg-[var(--retro-accent)]/40'
+                )}
+              >
+                {size.label}
+              </button>
+            ))}
           </div>
+        </Section>
 
-          {/* Prompt Input */}
+        <Section title="Prompt">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe the image you want to create
-            </label>
+            <FieldLabel htmlFor="ai-image-prompt">Describe the image you want</FieldLabel>
             <textarea
+              id="ai-image-prompt"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="A futuristic city at sunset with flying cars and neon lights"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-              rows={2}
+              className="field resize-none"
+              rows={3}
             />
           </div>
 
-          {/* Generate Button */}
           <button
             onClick={handleGenerate}
             disabled={isGeneratingImage || !prompt.trim()}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-black border-2 border-black rounded shadow-[3px_3px_0_var(--pop-pink)] hover:-translate-y-px transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
-            {isGeneratingImage ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Wand2 className="w-4 h-4" />
-            )}
-            <span>
-              {isGeneratingImage ? '🎨 AI is creating...' : 'Generate Image'}
-            </span>
+            {isGeneratingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+            {isGeneratingImage ? 'Creating your image…' : 'Generate image'}
           </button>
 
-          {/* Progress Bar */}
           {isGeneratingImage && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-gray-600">
-                <span>Generating image...</span>
-                <span>{generationProgress}%</span>
+            <div className="space-y-1.5" role="status">
+              <div className="flex justify-between text-xs font-semibold">
+                <span>Generating</span>
+                <span className="font-mono tabular-nums">{generationProgress}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${generationProgress}%` }}
-                />
+              <div className="paint-inset h-3 p-0.5">
+                <div className="h-full bg-black transition-all duration-300" style={{ width: `${generationProgress}%` }} />
               </div>
             </div>
           )}
 
-          {/* Generated Image */}
-          {generatedImage && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Generated Image
-                </label>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={handleRegenerate}
-                    className="flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 hover:bg-gray-200 rounded"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Regenerate</span>
-                  </button>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <Image
-                  src={generatedImage}
-                  alt="Generated"
-                  width={400}
-                  height={400}
-                  className="w-full max-w-sm mx-auto rounded-lg shadow-lg"
-                  style={{ animation: 'fadeIn 0.5s ease-in' }}
-                />
-              </div>
-              
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleAddToCanvas}
-                  disabled={isAdding}
-                  className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isAdding ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Plus className="w-4 h-4" />
-                  )}
-                  <span>{isAdding ? 'Adding...' : 'Add to Canvas'}</span>
-                </button>
-                
-                <button
-                  onClick={() => setGeneratedImage('')}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Generate New
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Error Display */}
           {error && (
-            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
-              <div className="font-medium">Generation Failed</div>
-              <div className="mt-1">{error}</div>
+            <div role="alert" className="p-2.5 text-xs bg-red-50 border-2 border-red-600 rounded">
+              <div className="font-bold text-red-700">Generation failed</div>
+              <div className="mt-0.5 text-red-700">{error}</div>
             </div>
           )}
-        </div>
+        </Section>
+
+        {generatedImage && (
+          <Section title="Result">
+            <div className="paint-inset p-1.5">
+              <Image
+                src={generatedImage}
+                alt="Generated"
+                width={400}
+                height={400}
+                className="w-full h-auto"
+                style={{ animation: 'fadeIn 0.5s ease-in' }}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                onClick={handleAddToCanvas}
+                disabled={isAdding}
+                className="col-span-2 flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold bg-[var(--retro-accent)] border-2 border-black rounded shadow-[3px_3px_0_#000] hover:-translate-y-px transition-transform disabled:opacity-50"
+              >
+                {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                {isAdding ? 'Adding…' : 'Add to canvas'}
+              </button>
+              <button onClick={handleRegenerate} className="retro-button !py-2 flex items-center justify-center gap-1.5 text-xs font-bold">
+                <RefreshCw className="w-3.5 h-3.5" />
+                Regenerate
+              </button>
+              <button onClick={() => setGeneratedImage('')} className="retro-button !py-2 flex items-center justify-center gap-1.5 text-xs font-bold">
+                <X className="w-3.5 h-3.5" />
+                Discard
+              </button>
+            </div>
+          </Section>
+        )}
       </div>
     );
   }

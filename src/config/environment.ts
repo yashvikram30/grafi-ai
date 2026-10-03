@@ -15,7 +15,9 @@ export const config = {
   
   // Sui Network Configuration (Walrus uses Sui network)
   suiNetwork: process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet',
-  suiRpcUrl: process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://fullnode.testnet.sui.io',
+  // Mysten's public fullnode no longer serves JSON-RPC, so default to a provider that does.
+  // Override with NEXT_PUBLIC_SUI_RPC_URL (e.g. your own Shinami/BlockVision/QuickNode URL).
+  suiRpcUrl: process.env.NEXT_PUBLIC_SUI_RPC_URL || 'https://sui-testnet-rpc.publicnode.com',
   
   // Walrus Configuration
   walrusWasmUrl: process.env.NEXT_PUBLIC_WALRUS_WASM_URL || 'https://unpkg.com/@mysten/walrus-wasm@latest/web/walrus_wasm_bg.wasm',
@@ -70,15 +72,17 @@ export function validateEnvironment() {
   return true;
 }
 
-// Validate environment on import (only in server-side context)
-if (typeof window === 'undefined') {
+// Validate environment on import (server only). Skipped during `next build`, where
+// secrets are usually not available and a failed check only adds noise to the build log.
+if (typeof window === 'undefined' && process.env.NEXT_PHASE !== 'phase-production-build') {
   try {
     validateEnvironment();
   } catch (error) {
-    console.error('Environment validation failed:', error);
+    const message = error instanceof Error ? error.message : String(error);
     // Don't throw in production to avoid breaking the app
     if (process.env.NODE_ENV === 'development') {
       throw error;
     }
+    console.warn(`[config] ${message}`);
   }
 }

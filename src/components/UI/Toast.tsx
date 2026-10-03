@@ -39,17 +39,17 @@ const toastConfig = {
   },
   info: {
     icon: Info,
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
+    bgColor: 'bg-[var(--retro-accent)]/40',
+    borderColor: 'border-black',
     textColor: 'text-blue-800',
-    iconColor: 'text-blue-600'
+    iconColor: 'text-black'
   },
   loading: {
     icon: Loader2,
-    bgColor: 'bg-gray-50',
-    borderColor: 'border-gray-200',
-    textColor: 'text-gray-800',
-    iconColor: 'text-gray-600'
+    bgColor: 'bg-neutral-50',
+    borderColor: 'border-black/20',
+    textColor: 'text-black',
+    iconColor: 'text-neutral-600'
   }
 };
 
@@ -86,7 +86,7 @@ export default function Toast({ id, type, title, message, duration = 5000, onClo
   return (
     <div
       className={cn(
-        "relative max-w-sm w-full bg-white shadow-lg rounded-lg border pointer-events-auto transform transition-all duration-300 ease-in-out",
+        "relative max-w-sm w-full bg-white shadow-lg rounded border pointer-events-auto transform transition-all duration-300 ease-in-out",
         config.bgColor,
         config.borderColor,
         isVisible && !isLeaving ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
@@ -102,7 +102,7 @@ export default function Toast({ id, type, title, message, duration = 5000, onClo
             )}
           </div>
           <div className="ml-3 w-0 flex-1">
-            <p className={cn("text-sm font-medium", config.textColor)}>
+            <p className={cn("text-sm font-semibold", config.textColor)}>
               {title}
             </p>
             {message && (

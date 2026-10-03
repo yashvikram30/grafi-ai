@@ -227,52 +227,52 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
   return (
     <div className="h-full w-full bg-white flex flex-col min-w-0 max-w-full">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0 min-w-0">
-          <h2 className="text-lg font-semibold text-gray-900 truncate">
+        <div className="flex items-center justify-between p-4 border-b border-black/20 flex-shrink-0 min-w-0">
+          <h2 className="text-sm font-bold text-black truncate">
             {mode === 'save' ? 'Save to Walrus' : 'Load from Walrus'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+            className="text-neutral-600 hover:text-neutral-600 transition-colors flex-shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 flex-shrink-0 min-w-0">
+        <div className="flex border-b border-black/20 flex-shrink-0 min-w-0">
           <button
             onClick={() => setActiveTab('save')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-2 py-3 text-xs font-bold uppercase tracking-wide transition-colors",
               activeTab === 'save'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
-            Save Design
+            Save
           </button>
           <button
             onClick={() => setActiveTab('load')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-2 py-3 text-xs font-bold uppercase tracking-wide transition-colors",
               activeTab === 'load'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
-            Load Design
+            Load
           </button>
           <button
             onClick={() => setActiveTab('batch')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-2 py-3 text-xs font-bold uppercase tracking-wide transition-colors",
               activeTab === 'batch'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
-            Batch Load
+            Batch
           </button>
         </div>
 
@@ -281,7 +281,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
           {/* Error Display */}
           {error && (
             <div className={cn(
-              "mb-4 p-3 rounded-lg text-sm",
+              "mb-4 p-3 rounded text-sm",
               error.startsWith('✅') 
                 ? "bg-green-50 text-green-800 border border-green-200" 
                 : "bg-red-50 text-red-800 border border-red-200"
@@ -294,7 +294,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
           {activeTab === 'save' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-black mb-2">
                   Design Name
                 </label>
                 <input
@@ -302,7 +302,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
                   value={designName}
                   onChange={(e) => setDesignName(e.target.value)}
                   placeholder="Enter design name"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                 />
               </div>
 
@@ -312,9 +312,9 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
                   id="encrypt"
                   checked={isEncrypted}
                   onChange={(e) => setIsEncrypted(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-black border-black rounded focus:ring-[var(--retro-accent)]"
                 />
-                <label htmlFor="encrypt" className="text-sm text-gray-700">
+                <label htmlFor="encrypt" className="text-sm text-black">
                   Encrypt with Seal (Private)
                 </label>
               </div>
@@ -322,7 +322,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
               <button
                 onClick={handleSave}
                 disabled={isStoring || isEncrypting || !designName.trim() || !isConnected}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-black rounded hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isStoring || isEncrypting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -345,7 +345,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
           {activeTab === 'load' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-black mb-2">
                   Blob ID
                 </label>
                 <input
@@ -353,9 +353,9 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
                   value={loadBlobId}
                   onChange={(e) => setLoadBlobId(e.target.value)}
                   placeholder="Enter Walrus blob ID"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-neutral-600">
                   Paste the blob ID you received when saving a design
                 </p>
               </div>
@@ -363,7 +363,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
               <button
                 onClick={handleLoad}
                 disabled={isRetrieving || isDecrypting || !loadBlobId.trim()}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isRetrieving || isDecrypting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -386,7 +386,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
           {activeTab === 'batch' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-black mb-2">
                   Blob IDs (one per line or comma-separated)
                 </label>
                 <textarea
@@ -394,9 +394,9 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
                   onChange={(e) => setBatchBlobIds(e.target.value)}
                   placeholder="Paste multiple Walrus blob IDs here&#10;One per line or separated by commas"
                   rows={4}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-neutral-600">
                   Enter multiple blob IDs to load them efficiently in batch
                 </p>
               </div>
@@ -404,7 +404,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
               <button
                 onClick={handleBatchLoad}
                 disabled={isBatchLoading || isDecrypting || !batchBlobIds.trim()}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isBatchLoading || isDecrypting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -424,22 +424,22 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
               {/* Loaded Designs List */}
               {loadedDesigns.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Loaded Designs</h4>
+                  <h4 className="text-xs font-semibold text-black mb-2">Loaded Designs</h4>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
                     {loadedDesigns.map((design, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-2 bg-neutral-50 rounded">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-900 truncate">
+                          <p className="text-xs font-semibold text-black truncate">
                             {design.data.metadata.name || `Design ${index + 1}`}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-neutral-600">
                             {design.blobId.slice(0, 8)}...{design.blobId.slice(-4)}
                           </p>
                         </div>
                         <div className="flex items-center space-x-1">
                           <button
                             onClick={() => handleCopyBlobId(design.blobId)}
-                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="p-1 text-neutral-600 hover:text-neutral-600 transition-colors"
                             title="Copy blob ID"
                           >
                             {copied ? (
@@ -450,7 +450,7 @@ export default function WalrusPopup({ isOpen, onClose, canvas, onLoad, onSave, m
                           </button>
                           <button
                             onClick={() => handleViewOnExplorer(design.blobId)}
-                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="p-1 text-neutral-600 hover:text-neutral-600 transition-colors"
                             title="View on explorer"
                           >
                             <ExternalLink className="w-4 h-4" />

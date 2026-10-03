@@ -263,35 +263,35 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto z-[10000]">
+      <div className="relative bg-white rounded shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto z-[10000]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-black/20">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Save className="w-6 h-6 text-blue-600" />
+            <div className="p-2 bg-[var(--retro-accent)]/40 rounded">
+              <Save className="w-6 h-6 text-black" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Walrus Storage</h2>
-              <p className="text-sm text-gray-500">Save and load designs on the decentralized network</p>
+              <h2 className="text-base font-semibold text-black">Walrus Storage</h2>
+              <p className="text-sm text-neutral-600">Save and load designs on the decentralized network</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+            className="p-2 text-neutral-600 hover:text-neutral-600 transition-colors rounded hover:bg-[var(--retro-accent)]/40"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
         
         {/* Tabs */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-black/20">
           <button
             onClick={() => setActiveTab('save')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-4 py-3 text-sm font-semibold transition-colors",
               activeTab === 'save'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
             Save Design
@@ -299,10 +299,10 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
           <button
             onClick={() => setActiveTab('load')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-4 py-3 text-sm font-semibold transition-colors",
               activeTab === 'load'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
             Load Design
@@ -310,10 +310,10 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
           <button
             onClick={() => setActiveTab('batch')}
             className={cn(
-              "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+              "flex-1 px-4 py-3 text-sm font-semibold transition-colors",
               activeTab === 'batch'
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-black border-b-2 border-black bg-[var(--retro-accent)]/40"
+                : "text-neutral-600 hover:text-black"
             )}
           >
             Batch Load
@@ -324,10 +324,10 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
         <div className="p-6">
           {/* Error Display */}
           {(error || walrusError) && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-5 h-5 text-red-600" />
-                <span className="font-medium text-red-800">Error</span>
+                <span className="font-semibold text-red-800">Error</span>
               </div>
               <p className="mt-1 text-sm text-red-700">
                 {error || walrusError}
@@ -337,10 +337,10 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
 
           {/* Wallet Status */}
           {!isConnected && (
-            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
               <div className="flex items-center space-x-2">
                 <Wallet className="w-5 h-5 text-yellow-600" />
-                <span className="font-medium text-yellow-800">Wallet Required</span>
+                <span className="font-semibold text-yellow-800">Wallet Required</span>
               </div>
               <p className="mt-1 text-sm text-yellow-700">
                 You need to connect your wallet to save designs to Walrus storage.
@@ -349,16 +349,16 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
           )}
 
           {isConnected && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded">
               <div className="flex items-center space-x-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <span className="font-medium text-green-800">Wallet Connected</span>
+                <span className="font-semibold text-green-800">Wallet Connected</span>
               </div>
               <p className="mt-1 text-sm text-green-700">
                 Connected as: {address?.slice(0, 6)}...{address?.slice(-4)} ({walletName})
               </p>
               {!walletService.canSignAndExecute && walletService.canSignTransaction && (
-                <p className="mt-1 text-xs text-blue-600">
+                <p className="mt-1 text-xs text-black">
                   ℹ️ Using fallback signing method (sign + execute)
                 </p>
               )}
@@ -369,10 +369,10 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
             <div className="space-y-4">
               {/* Success Message */}
               {savedBlobId && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="p-4 bg-green-50 border border-green-200 rounded">
                   <div className="flex items-center space-x-2 mb-2">
                     <Check className="w-5 h-5 text-green-600" />
-                    <span className="font-medium text-green-800">Design Saved Successfully!</span>
+                    <span className="font-semibold text-green-800">Design Saved Successfully!</span>
                   </div>
                   <div className="text-sm text-green-700 mb-3">
                     Your design has been stored on the Walrus network.
@@ -383,7 +383,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                     </code>
                     <button
                       onClick={handleCopyBlobId}
-                      className="flex items-center space-x-1 px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                      className="flex items-center space-x-1 px-2 py-1 text-xs bg-black text-white rounded hover:bg-neutral-800"
                     >
                       {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                       <span>{copied ? 'Copied!' : 'Copy'}</span>
@@ -396,7 +396,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
               {!savedBlobId && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-semibold text-black mb-2">
                       Design Name
                     </label>
                     <input
@@ -404,7 +404,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                       value={designName}
                       onChange={(e) => setDesignName(e.target.value)}
                       placeholder="Enter a name for your design"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                     />
                   </div>
 
@@ -415,21 +415,21 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                         id="encrypt"
                         checked={isEncrypted}
                         onChange={(e) => setIsEncrypted(e.target.checked)}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="w-4 h-4 text-black border-black rounded focus:ring-[var(--retro-accent)]"
                       />
-                      <label htmlFor="encrypt" className="text-sm text-gray-700 flex items-center space-x-2">
+                      <label htmlFor="encrypt" className="text-sm text-black flex items-center space-x-2">
                         <Shield className="w-4 h-4" />
                         <span>Encrypt design with Seal (recommended for private content)</span>
                       </label>
                     </div>
                     
                     {isEncrypted && (
-                      <div className="ml-7 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="ml-7 p-3 bg-[var(--retro-accent)]/40 border border-black rounded">
                         <div className="flex items-center space-x-2 mb-2">
-                          <Lock className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-800">Seal Encryption Enabled</span>
+                          <Lock className="w-4 h-4 text-black" />
+                          <span className="text-sm font-semibold text-blue-800">Seal Encryption Enabled</span>
                         </div>
-                        <div className="text-xs text-blue-700 space-y-1">
+                        <div className="text-xs text-black space-y-1">
                           <p>• Your design will be encrypted using threshold encryption</p>
                           <p>• Only you can decrypt and access the design</p>
                           <p>• Access is controlled via Sui blockchain policies</p>
@@ -442,7 +442,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                   <button
                     onClick={handleSave}
                     disabled={isStoring || isEncrypting || !designName.trim() || !isConnected}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-black rounded hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isStoring || isEncrypting ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -468,7 +468,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
           ) : activeTab === 'load' ? (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-black mb-2">
                   Blob ID
                 </label>
                 <input
@@ -476,9 +476,9 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                   value={loadBlobId}
                   onChange={(e) => setLoadBlobId(e.target.value)}
                   placeholder="Paste the Walrus blob ID here"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-neutral-600">
                   Enter the blob ID you received when saving a design
                 </p>
               </div>
@@ -486,7 +486,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
               <button
                 onClick={handleLoad}
                 disabled={isRetrieving || isDecrypting || !loadBlobId.trim()}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-black rounded hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isRetrieving || isDecrypting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -508,25 +508,25 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
               {/* Batch Load Results */}
               {loadedDesigns.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-gray-900">Loaded Designs ({loadedDesigns.length})</h3>
+                  <h3 className="text-lg font-semibold text-black">Loaded Designs ({loadedDesigns.length})</h3>
                   <div className="max-h-60 overflow-y-auto space-y-2">
                     {loadedDesigns.map((result, index) => (
-                      <div key={index} className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                      <div key={index} className="p-3 bg-neutral-50 border-2 border-black/20 rounded">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">
+                            <p className="font-semibold text-black">
                               {result.data.metadata.name || `Design ${index + 1}`}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-neutral-600">
                               {result.data.metadata.type} • {new Date(result.data.metadata.created).toLocaleDateString()}
                             </p>
-                            <p className="text-xs text-gray-400 font-mono">
+                            <p className="text-xs text-neutral-600 font-mono">
                               {result.blobId.slice(0, 8)}...{result.blobId.slice(-8)}
                             </p>
                           </div>
                           <button
                             onClick={() => handleLoadDesign(result.data.designData)}
-                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                            className="px-3 py-1 text-sm bg-black text-white rounded hover:bg-neutral-800"
                           >
                             Load
                           </button>
@@ -539,7 +539,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
 
               {/* Batch Load Form */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-black mb-2">
                   Blob IDs (one per line or comma-separated)
                 </label>
                 <textarea
@@ -547,9 +547,9 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
                   onChange={(e) => setBatchBlobIds(e.target.value)}
                   placeholder="Paste multiple Walrus blob IDs here&#10;One per line or separated by commas"
                   rows={4}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border-2 border-black rounded focus:outline-none focus:ring-2 focus:ring-[var(--retro-accent)]"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-neutral-600">
                   Enter multiple blob IDs to load them efficiently in batch
                 </p>
               </div>
@@ -557,7 +557,7 @@ export default function SaveDialog({ isOpen, onClose, canvas, onLoad, onSave }: 
               <button
                 onClick={handleBatchLoad}
                 disabled={isBatchLoading || isDecrypting || !batchBlobIds.trim()}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isBatchLoading || isDecrypting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

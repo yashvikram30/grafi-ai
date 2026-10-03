@@ -66,7 +66,7 @@ export const DesignsList: React.FC<DesignsListProps> = ({
 
   if (!walletAddress) {
     return (
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-neutral-600">
         <div className="text-4xl mb-2">🔐</div>
         <p className="text-sm">Connect your wallet to view your designs</p>
       </div>
@@ -78,8 +78,8 @@ export const DesignsList: React.FC<DesignsListProps> = ({
       <div className="p-4">
         <div className="flex items-center justify-center py-8">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-gray-600">Loading your designs...</p>
+            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm text-neutral-600">Loading your designs...</p>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ export const DesignsList: React.FC<DesignsListProps> = ({
           <p className="text-sm text-red-600 mb-3">{error}</p>
           <button
             onClick={handleRefresh}
-            className="bg-blue-600 text-white text-xs py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200"
+            className="bg-black text-white text-xs py-2 px-4 rounded hover:bg-neutral-800 transition-colors duration-200"
           >
             Try Again
           </button>
@@ -108,8 +108,8 @@ export const DesignsList: React.FC<DesignsListProps> = ({
       <div className="p-4">
         <div className="text-center py-8">
           <div className="text-4xl mb-2">🎨</div>
-          <p className="text-sm text-gray-600 mb-2">No designs found</p>
-          <p className="text-xs text-gray-500">Create and save your first design to see it here</p>
+          <p className="text-sm text-neutral-600 mb-2">No designs found</p>
+          <p className="text-xs text-neutral-600">Create and save your first design to see it here</p>
         </div>
       </div>
     );
@@ -120,15 +120,15 @@ export const DesignsList: React.FC<DesignsListProps> = ({
       {/* Header with controls */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-medium text-gray-900">My Designs</h3>
-          <span className="text-xs text-gray-500">({designs.length})</span>
+          <h3 className="text-xs font-semibold text-black">My Designs</h3>
+          <span className="text-xs text-neutral-600">({designs.length})</span>
         </div>
         
         <div className="flex items-center gap-2">
           {/* Refresh button */}
           <button
             onClick={handleRefresh}
-            className="p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            className="p-1 text-neutral-600 hover:text-black transition-colors duration-200"
             title="Refresh designs"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +157,7 @@ export const DesignsList: React.FC<DesignsListProps> = ({
         <div className="mt-4 text-center">
           <button
             onClick={handleRefresh}
-            className="text-xs text-gray-500 hover:text-gray-700 transition-colors duration-200"
+            className="text-xs text-neutral-600 hover:text-black transition-colors duration-200"
           >
             Refresh designs
           </button>

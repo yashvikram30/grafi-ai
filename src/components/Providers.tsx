@@ -4,6 +4,7 @@ import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { getFullnodeUrl } from '@mysten/sui/client';
+import { config } from '@/config/environment';
 
 // Create QueryClient instance
 const queryClient = new QueryClient();
@@ -11,7 +12,7 @@ const queryClient = new QueryClient();
 // Create network configuration using official dApp Kit pattern
 const { networkConfig } = createNetworkConfig({
   localnet: { url: getFullnodeUrl('localnet') },
-  testnet: { url: getFullnodeUrl('testnet') },
+  testnet: { url: config.suiRpcUrl },
   mainnet: { url: getFullnodeUrl('mainnet') },
 });
 

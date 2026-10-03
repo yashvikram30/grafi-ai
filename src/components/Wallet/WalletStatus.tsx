@@ -26,7 +26,8 @@ export default function WalletStatus({ onConnect: _onConnect }: WalletStatusProp
       const result = await suiClient.getBalance({ owner: address, coinType: '0x2::sui::SUI' });
       setBalance((parseFloat(result.totalBalance) / 1e9).toFixed(2));
     } catch (error) {
-      console.error('Failed to refresh balance:', error);
+      // The balance chip is optional, so a failed lookup just hides it
+      console.warn('Could not load wallet balance:', error);
       setBalance(null);
     }
   }, [address, suiClient]);
