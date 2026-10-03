@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: config.useGroq ? "llama3-8b-8192" : "gpt-4",
+      model: config.useGroq ? config.groqModel : "gpt-4",
       messages: [{ role: "user", content: prompt }],
       max_tokens: maxTokens,
       temperature: temperature

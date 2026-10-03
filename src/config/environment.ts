@@ -7,6 +7,7 @@ export const config = {
   // Groq API Configuration (alternative to OpenAI)
   groqApiKey: process.env.GROQ_API_KEY || '',
   useGroq: process.env.USE_GROQ === 'true',
+  groqModel: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
   
   // Stability AI Configuration (for image generation)
   stabilityApiKey: process.env.STABILITY_API_KEY || '',
